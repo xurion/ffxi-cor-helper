@@ -89,7 +89,7 @@ end
 function execute_bind(key)
   local command = 'input '
   if indexed_key_binds[key].type == 'ja' or indexed_key_binds[key].type == 'roll' then
-    command = '/ja "' .. indexed_key_binds[key].name .. '" <me>'
+    command = command .. '/ja "' .. indexed_key_binds[key].name .. '" <me>'
   elseif indexed_key_binds[key].type == 'ws' then
     local target = windower.ffxi.get_mob_by_target('t')
     local target_distance = math.sqrt(target.distance)
