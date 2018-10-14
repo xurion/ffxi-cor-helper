@@ -86,16 +86,28 @@ function remove_binds()
   end
 end
 
+function play_warning_sound()
+  windower.play_sound(windower.addon_path .. 'warning.wav')
+end
+
+function generate_warning(warning)
+  play_warning_sound()
+  windower.add_to_chat(3, '*****' .. warning .. '*****')
+end
+
 function execute_bind(key)
   local command = 'input '
   if indexed_key_binds[key].type == 'ja' or indexed_key_binds[key].type == 'roll' then
     command = command .. '/ja "' .. indexed_key_binds[key].name .. '" <me>'
   elseif indexed_key_binds[key].type == 'ws' then
     local target = windower.ffxi.get_mob_by_target('t')
+    if target == nil then
+      generate_warning('No target selected')
+      return false
+    end
     local target_distance = math.sqrt(target.distance)
     if target_distance > 21.7 then
-      windower.play_sound(windower.addon_path .. 'distance.wav')
-      windower.add_to_chat(3, '*****Target too far away - cancelling weapon skill*****')
+      generate_warning('Target too far away - cancelling weapon skill')
       return false
     end
     command = command .. '/ws "' .. indexed_key_binds[key].name .. '" <t>'
