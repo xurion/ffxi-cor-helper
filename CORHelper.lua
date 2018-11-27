@@ -6,6 +6,7 @@ _addon.author = 'Dean James (Xurion of Bismarck)'
 packets = require('packets')
 texts = require('texts')
 config = require('config')
+buff_list = require('resources').buffs
 
 key_binds = require('binds')
 indexed_key_binds = {}
@@ -50,26 +51,23 @@ end
 
 function get_hud_text()
   local hud_info = {}
-  local roll_binds = {}
+  local roll_binds = ''
   local color
   local buffs = windower.ffxi.get_player().buffs
   for _, key_bind in pairs(key_binds) do
     if key_bind.type ~= 'raw' and key_bind.type ~= 'ws' then
-      -- color = '255,255,255'
-      -- if key_bind.type == 'roll' then
-      --   for _, buff_id in pairs(buffs) do
-          -- if buff_list[buff_id].en == key_bind.name then
-          --   color = '0,255,0'
-          -- end
-        -- end
-      -- end
-      --table.insert(roll_binds, '\\cs(255,255,255)' .. key_bind.key .. ' ' .. key_bind.name .. ' [' .. key_bind.help .. ']\\cr')
-      --table.insert(roll_binds, '\\cs(' .. color .. ')' .. key_bind.key .. ' ' .. key_bind.name .. ' (' .. key_bind.help .. ')\\cr')
-      table.insert(roll_binds, key_bind.key .. ' ' .. key_bind.name .. ' (' .. key_bind.help .. ')')
+      color = '255,255,255'
+      if key_bind.type == 'roll' then
+        for _, buff_id in pairs(buffs) do
+          if buff_list[buff_id].en == key_bind.name then
+            color = '0,255,0'
+          end
+        end
+      end
+      roll_binds = roll_binds .. ' \\cs(' .. color .. ')' .. key_bind.key .. ' ' .. key_bind.name .. ' (' .. key_bind.help .. ')\\cr\n'
     end
   end
-  hud_info.roll_binds = concat_strings(roll_binds)
-
+  hud_info.roll_binds = roll_binds
   return hud_info
 end
 
@@ -135,6 +133,11 @@ end)
 
 windower.register_event('unload', function ()
   remove_binds()
+end)
+
+windower.register_event('gain buff', 'lose buff', function()
+  local text = get_hud_text()
+  ui:update(text)
 end)
 
 windower.register_event('addon command', function(command, key)
