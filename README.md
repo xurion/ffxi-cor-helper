@@ -1,6 +1,6 @@
 # FFXI COR helper
 
-A simple UI and keybinds for custom COR rolls ann other abilities.
+A simple UI and keybinds for custom COR rolls and other abilities.
 
 ## Setup
 
